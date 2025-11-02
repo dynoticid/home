@@ -20,47 +20,55 @@
     overflow: hidden;
   }
 
-  /* Text di tengah layar */
   .text-container {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
     width: 90%;
+    z-index: 2;
   }
 
-  h1 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 15px;
-  }
+  h1 { font-size: 2.5rem; font-weight: 700; margin-bottom: 15px; }
+  p { font-size: 1.2rem; color: #e0d7ff; }
 
-  p {
-    font-size: 1.2rem;
-    color: #e0d7ff;
-  }
-
-  /* GIF selalu mentok bawah */
   .gif-container {
     position: absolute;
     bottom: 0;
     left: 0;
     width: 100%;
     height: auto;
+    z-index: 1;
   }
 
-  .gif {
-    width: 100%;
-    height: auto;
-    max-height: 50vh; /* maksimal setengah layar agar tidak terlalu besar */
-    object-fit: contain;
-    display: block;
+  .gif { width: 100%; max-width: 90%; height: auto; object-fit: contain; display: block; }
+
+  /* Spinner overlay */
+  .spinner-overlay {
+    position: fixed;
+    top:0; left:0; width:100%; height:100%;
+    background: rgba(0,0,0,0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 10;
+    display: none; /* hide by default */
   }
 
-  @media (max-width: 480px) {
-    h1 { font-size: 2rem; }
-    p { font-size: 1rem; }
-    .gif { max-height: 50vh; }
+  .spinner {
+    border: 6px solid rgba(255,255,255,0.3);
+    border-top: 6px solid #fff;
+    border-radius: 50%;
+    width: 50px; height: 50px;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin { 100% { transform: rotate(360deg); } }
+
+  @media (max-width:480px){
+    h1{ font-size: 2rem;}
+    p{ font-size:1rem;}
+    .gif{ max-height:50vh; }
   }
 </style>
 </head>
@@ -75,24 +83,38 @@
   <img class="gif" src="https://i.imgur.com/j4uR4Ud.gif" alt="Maintenance GIF">
 </div>
 
-<!-- Musik loop tersembunyi -->
-<audio id="bgMusic" loop>
+<!-- Spinner overlay -->
+<div class="spinner-overlay" id="spinner">
+  <div class="spinner"></div>
+</div>
+
+<!-- Audio -->
+<audio id="bgMusic" loop muted autoplay>
   <source src="https://k.top4top.io/m_3588b4xl00.mp3" type="audio/mpeg">
-  Browser kamu tidak mendukung audio tag.
 </audio>
 
 <script>
   const audio = document.getElementById('bgMusic');
-
-  // Play audio saat user klik/tap layar pertama kali
   function playAudio() {
-    audio.play().catch(() => {});
+    audio.muted = false;
+    audio.play().catch(()=>{});
     document.removeEventListener('click', playAudio);
     document.removeEventListener('touchstart', playAudio);
   }
-
   document.addEventListener('click', playAudio);
   document.addEventListener('touchstart', playAudio);
+
+  // Spinner saat scroll/pull
+  let lastScroll = 0;
+  const spinner = document.getElementById('spinner');
+
+  window.addEventListener('scroll', () => {
+    if(window.scrollY < lastScroll){ // scroll ke atas
+      spinner.style.display = 'flex';
+      setTimeout(()=>spinner.style.display='none',800);
+    }
+    lastScroll = window.scrollY;
+  });
 </script>
 
 </body>
