@@ -17,9 +17,10 @@
     padding: 0;
     position: relative;
     text-align: center;
-    overflow: hidden; /* pastikan tidak ada scroll */
+    overflow: hidden;
   }
 
+  /* Text di tengah layar */
   .text-container {
     position: absolute;
     top: 50%;
@@ -39,27 +40,27 @@
     color: #e0d7ff;
   }
 
+  /* GIF selalu mentok bawah */
   .gif-container {
     position: absolute;
     bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
+    left: 0;
     width: 100%;
-    margin: 0;
-    padding: 0;
+    height: auto;
   }
 
   .gif {
-    display: block;
     width: 100%;
-    max-width: 90%;
     height: auto;
+    max-height: 50vh; /* maksimal setengah layar agar tidak terlalu besar */
+    object-fit: contain;
+    display: block;
   }
 
   @media (max-width: 480px) {
     h1 { font-size: 2rem; }
     p { font-size: 1rem; }
-    .gif { max-width: 100%; }
+    .gif { max-height: 50vh; }
   }
 </style>
 </head>
@@ -73,6 +74,26 @@
 <div class="gif-container">
   <img class="gif" src="https://i.imgur.com/j4uR4Ud.gif" alt="Maintenance GIF">
 </div>
+
+<!-- Musik loop tersembunyi -->
+<audio id="bgMusic" loop>
+  <source src="https://k.top4top.io/m_3588b4xl00.mp3" type="audio/mpeg">
+  Browser kamu tidak mendukung audio tag.
+</audio>
+
+<script>
+  const audio = document.getElementById('bgMusic');
+
+  // Play audio saat user klik/tap layar pertama kali
+  function playAudio() {
+    audio.play().catch(() => {});
+    document.removeEventListener('click', playAudio);
+    document.removeEventListener('touchstart', playAudio);
+  }
+
+  document.addEventListener('click', playAudio);
+  document.addEventListener('touchstart', playAudio);
+</script>
 
 </body>
 </html>
